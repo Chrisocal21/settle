@@ -75,6 +75,15 @@ export interface PlacedCard {
   position: Position;
   isStationary?: boolean; // For resource nodes that can't be moved
   tier?: number; // 1-3 for resource nodes quality
+  storage?: Record<ResourceType, number>; // Current storage amounts
+  storageCapacity?: number; // Max storage capacity
+  isProcessing?: boolean; // Currently processing resources
+  recipe?: {
+    inputs: Record<ResourceType, number>;
+    outputs: Record<ResourceType, number>;
+    processingTime: number; // seconds
+    progress: number; // 0-100
+  };
 }
 
 // Resource node types (stationary on map)
@@ -87,3 +96,14 @@ export type ResourceNodeType =
 
 // Game mode
 export type GameMode = 'survival' | 'builder' | 'puzzle' | 'campaign';
+
+// Connection between buildings (conveyors)
+export interface Connection {
+  id: string;
+  from: string; // card instanceId
+  to: string; // card instanceId
+  fromPos: Position;
+  toPos: Position;
+  speed: number; // items per second
+  type: 'conveyor' | 'pipe'; // future: different connection types
+}

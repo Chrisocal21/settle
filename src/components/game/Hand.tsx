@@ -3,6 +3,9 @@ import { useGameStore } from '../../store/gameStore';
 const cardInfo: Record<string, { emoji: string; color: string; bg: string }> = {
   miner: { emoji: '⛏️', color: 'border-yellow-600', bg: 'bg-yellow-100' },
   extractor: { emoji: '💦', color: 'border-cyan-600', bg: 'bg-cyan-100' },
+  storage_small: { emoji: '📦', color: 'border-amber-600', bg: 'bg-amber-100' },
+  storage_medium: { emoji: '🏪', color: 'border-amber-700', bg: 'bg-amber-200' },
+  storage_large: { emoji: '🏢', color: 'border-amber-800', bg: 'bg-amber-300' },
   smelter: { emoji: '🔥', color: 'border-red-600', bg: 'bg-red-100' },
   foundry: { emoji: '🏭', color: 'border-red-800', bg: 'bg-red-200' },
   constructor: { emoji: '🏗️', color: 'border-blue-600', bg: 'bg-blue-100' },

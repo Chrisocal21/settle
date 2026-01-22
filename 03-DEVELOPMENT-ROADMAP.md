@@ -287,16 +287,94 @@ src/
 
 ---
 
-## Phase 3: Resource Flow System
+## Phase 3: Resource Flow System ⏳ IN PROGRESS (75% Complete)
+**Time: 1 week** | **Actual: 4 hours so far**
+
+### Goals
+- Resources as first-class concept ✅
+- Storage system with capacity limits ✅
+- Manual resource collection ✅
+- Inventory management system ✅
+- Visual connections between cards ⏳
+- Resources flow from outputs to inputs ⏳
+- Processing buildings functional ⏳
+
+### Completed Tasks
+
+- [x] Game tick loop (runs every 1 second)
+- [x] Resource production from miners/extractors
+- [x] Tier-based production rates (Tier 1: 1/sec, Tier 2: 2/sec, Tier 3: 3/sec)
+- [x] Storage limits (miners: 100 capacity, 1 slot × 100)
+- [x] Water production limit (stops at 200)
+- [x] Stone byproducts (mining iron/coal produces 20% stone)
+- [x] Manual resource collection (click miner to collect)
+- [x] Player inventory system (1000 capacity)
+- [x] Storage buildings (Small: 500, Medium: 1000, Large: 2000)
+- [x] Visual storage indicators (fill bar, red ring when full)
+- [x] Inventory UI popup modal
+
+### In Progress Tasks
+
+- [ ] Storage building functionality (accept resources)
+- [ ] Conveyor belt system (connect buildings)
+- [ ] Visual resource flow animations
+- [ ] Processing buildings (smelter, foundry)
+- [ ] Resource consumption
+- [ ] Splitter logic (divide resources)
+
+### Implemented Features
+
+**Storage System:**
+- Miners/Extractors: 1 slot × 100 = 100 capacity
+- Small Storage: 5 slots × 100 = 500 capacity (📦)
+- Medium Storage: 10 slots × 100 = 1000 capacity (🏪)
+- Large Storage: 20 slots × 100 = 2000 capacity (🏢)
+
+**Resource Limits:**
+- Water: Stops at 200 (forces usage in production)
+- Miners: Stop at 100 (forces manual collection)
+- All mining produces stone byproduct (limits pure stone nodes)
+
+**Inventory System:**
+- Click miner/extractor overlay to collect resources
+- Resources transfer to player inventory (max 1000)
+- Visual indicators: fill bars, bounce animation when full
+- Popup modal showing all resources with colored tiles
+- Capacity bar (green/yellow/red based on usage)
+
+### Key Files
+
+```
+src/
+├── components/game/
+│   ├── Inventory.tsx    # Full inventory UI with resource grid
+│   ├── ResourceBar.tsx  # Quick stats (population, resources)
+│   ├── Tile.tsx         # Visual storage indicators
+│   └── Grid.tsx         # Collection click handler
+├── store/gameStore.ts   # Tick system, storage logic
+└── types/game.ts        # Storage fields in PlacedCard
+```
+
+### Deliverable
+✅ Functional resource production with storage limits and manual collection
+⏳ Automated resource flow between buildings via conveyors
+
+### Definition of Done (Phase 3)
+- [x] Resources produce over time
+- [x] Storage limits enforced
+- [x] Manual collection working
+- [x] Inventory UI functional
+- [ ] Conveyors connect buildings
+- [ ] Resources flow automatically through conveyors
+- [ ] Processing buildings consume/produce resources
+- [ ] Visual feedback for resource flow
+
+---
+
+## Phase 4: Production Chains (Next Up)
 **Time: 1 week**
 
 ### Goals
-- Resources as first-class concept
-- Visual connections between cards
-- Resources flow from outputs to inputs
-- Display resource counts
-
-### Tasks
 
 - [ ] Define resource types
 - [ ] Create `ResourceBar` component (top of screen)

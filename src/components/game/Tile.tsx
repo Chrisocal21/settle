@@ -5,7 +5,7 @@ interface TileProps {
   tile: TileType;
   onDrop: (position: { x: number; y: number }) => void;
   isSelected: boolean;
-  onClick: () => void;
+  onClick: (e: React.MouseEvent) => void;
 }
 
 const cardDisplay: Record<string, { emoji: string; color: string; name: string }> = {
@@ -18,6 +18,9 @@ const cardDisplay: Record<string, { emoji: string; color: string; name: string }
   // Player buildings
   miner: { emoji: '⛏️', color: 'bg-yellow-500', name: 'Miner' },
   extractor: { emoji: '💦', color: 'bg-cyan-500', name: 'Extractor' },
+  storage_small: { emoji: '📦', color: 'bg-amber-500', name: 'Storage S' },
+  storage_medium: { emoji: '🏪', color: 'bg-amber-600', name: 'Storage M' },
+  storage_large: { emoji: '🏢', color: 'bg-amber-700', name: 'Storage L' },
   smelter: { emoji: '🔥', color: 'bg-red-500', name: 'Smelter' },
   foundry: { emoji: '🏭', color: 'bg-red-700', name: 'Foundry' },
   constructor: { emoji: '🏗️', color: 'bg-blue-600', name: 'Constructor' },
@@ -31,6 +34,11 @@ export function Tile({ tile, onDrop, isSelected, onClick }: TileProps) {
   const cardsOnTile = placedCards.filter(
     (c) => c.position.x === tile.position.x && c.position.y === tile.position.y
   );
+
+  // Check if this tile is actively producing resources
+  const hasResourceNode = cardsOnTile.some(c => c.isStationary);
+  const hasExtractor = cardsOnTile.some(c => ['miner', 'extractor'].includes(c.definitionId));
+  const isProducing = hasResourceNode && hasExtractor;
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -55,7 +63,7 @@ export function Tile({ tile, onDrop, isSelected, onClick }: TileProps) {
 
   return (
     <div
-      onClick={onClick}
+      onClick={(e) => onClick(e)}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
@@ -66,6 +74,7 @@ export function Tile({ tile, onDrop, isSelected, onClick }: TileProps) {
         bg-gray-50
         transition-all
         ${isSelected ? 'ring-4 ring-green-400 bg-green-50' : ''}
+        ${isProducing ? 'ring-2 ring-green-500 animate-pulse' : ''}
         hover:bg-gray-100
         cursor-pointer
       `}
@@ -111,6 +120,10 @@ export function Tile({ tile, onDrop, isSelected, onClick }: TileProps) {
           {/* Render miners/extractors as small overlays */}
           {cardsOnTile.filter(c => ['miner', 'extractor'].includes(c.definitionId)).map((card) => {
             const cardInfo = cardDisplay[card.definitionId];
+            const storageUsed = card.storage ? Object.values(card.storage).reduce((sum, val) => sum + val, 0) : 0;
+            const capacity = card.storageCapacity || 100;
+            const fillPercent = (storageUsed / capacity) * 100;
+            const isFull = storageUsed >= capacity;
             
             return (
               <div
@@ -119,22 +132,31 @@ export function Tile({ tile, onDrop, isSelected, onClick }: TileProps) {
                 onDragStart={(e) => {
                   e.dataTransfer.setData('cardInstanceId', card.instanceId);
                 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClick(e);
+                }}
                 className={`
                   absolute bottom-0.5 right-0.5
                   w-6 h-6
                   ${cardInfo.color} 
-                  border-2 border-white
+                  ${isFull ? 'ring-2 ring-red-500 animate-bounce' : 'border-2 border-white'}
                   rounded
-                  cursor-move hover:scale-110
+                  cursor-pointer hover:scale-110
                   flex items-center justify-center 
                   text-white
-                  transition-transform
+                  transition-all
                   shadow-lg
                 `}
                 style={{ zIndex: 10 }}
-                title={cardInfo.name}
+                title={`${cardInfo.name} - ${Math.floor(storageUsed)}/${capacity} (Click to collect)`}
               >
                 <div className="text-sm">{cardInfo.emoji}</div>
+                {/* Storage fill indicator */}
+                <div 
+                  className="absolute bottom-0 left-0 right-0 bg-green-400 opacity-50 rounded-b"
+                  style={{ height: `${fillPercent}%` }}
+                />
               </div>
             );
           })}
@@ -142,6 +164,11 @@ export function Tile({ tile, onDrop, isSelected, onClick }: TileProps) {
           {/* Render other buildings normally */}
           {cardsOnTile.filter(c => !c.isStationary && !['miner', 'extractor'].includes(c.definitionId)).map((card) => {
             const cardInfo = cardDisplay[card.definitionId];
+            const isStorage = ['storage_small', 'storage_medium', 'storage_large'].includes(card.definitionId);
+            const storageUsed = card.storage ? Object.values(card.storage).reduce((sum, val) => sum + val, 0) : 0;
+            const capacity = card.storageCapacity || 0;
+            const fillPercent = capacity > 0 ? (storageUsed / capacity) * 100 : 0;
+            const isFull = storageUsed >= capacity;
             
             return (
               <div
@@ -150,20 +177,39 @@ export function Tile({ tile, onDrop, isSelected, onClick }: TileProps) {
                 onDragStart={(e) => {
                   e.dataTransfer.setData('cardInstanceId', card.instanceId);
                 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClick(e);
+                }}
                 className={`
                   absolute inset-0.5
                   ${cardInfo.color} 
                   border border-gray-900
+                  ${isStorage && isFull ? 'ring-2 ring-orange-500' : ''}
                   rounded
                   cursor-move hover:scale-105
                   flex flex-col items-center justify-center 
                   text-white font-bold
                   transition-transform
+                  relative
                 `}
-                title={cardInfo.name}
+                title={isStorage ? `${cardInfo.name} - ${Math.floor(storageUsed)}/${capacity}` : cardInfo.name}
               >
                 <div className="text-xl">{cardInfo.emoji}</div>
                 <div className="text-[6px]">{cardInfo.name}</div>
+                
+                {/* Storage fill indicator */}
+                {isStorage && (
+                  <>
+                    <div 
+                      className="absolute bottom-0 left-0 right-0 bg-green-400 opacity-50 rounded-b"
+                      style={{ height: `${fillPercent}%` }}
+                    />
+                    <div className="absolute top-0 right-0 text-[8px] bg-black/50 px-1 rounded">
+                      {Math.floor(fillPercent)}%
+                    </div>
+                  </>
+                )}
               </div>
             );
           })}
