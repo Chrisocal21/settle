@@ -34,18 +34,18 @@ Think: Satisfactory meets card games, playable in your browser.
 ## 🚀 Quick Start
 
 ```bash
-# Create project
-npm create vite@latest settle -- --template react-ts
-cd settle
-
-# Install deps
-npm install zustand immer uuid
-npm install -D tailwindcss postcss autoprefixer @types/uuid
-npx tailwindcss init -p
-
-# Run
+# Already set up! Run the dev server:
 npm run dev
+
+# Opens at http://localhost:5173
 ```
+
+**Current Status:** ✅ Phases 0-2 Complete
+- Fullscreen grid-based world map (30×30)
+- Drag-and-drop card placement system
+- 3-tier resource node generation
+- Trading card-style modals
+- Mobile gesture support
 
 See [00-QUICK-START.md](./00-QUICK-START.md) for complete walkthrough.
 

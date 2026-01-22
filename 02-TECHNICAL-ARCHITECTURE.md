@@ -33,110 +33,128 @@
 ```
 settle/
 ├── public/
-│   ├── icons/                  # PWA icons (192, 512)
-│   ├── sounds/                 # Audio files
-│   └── manifest.json           # PWA manifest
+│   ├── icons/                  # PWA icons (192, 512) - TODO
+│   ├── sounds/                 # Audio files - TODO
+│   └── manifest.json           # PWA manifest - TODO
 │
 ├── src/
 │   ├── components/
 │   │   ├── game/
-│   │   │   ├── Grid.tsx        # Main game grid
-│   │   │   ├── Tile.tsx        # Individual grid tile
-│   │   │   ├── Card.tsx        # Card component
-│   │   │   ├── CardHand.tsx    # Player's hand
-│   │   │   ├── Connection.tsx  # Resource flow lines
-│   │   │   └── ResourceBar.tsx # Top status bar
+│   │   │   ├── Grid.tsx        # ✅ 30×30 grid with drag-drop
+│   │   │   ├── Tile.tsx        # ✅ Tiles with cards, tiers
+│   │   │   ├── Hand.tsx        # ✅ Player's building cards
+│   │   │   ├── CardModal.tsx   # ✅ Trading card detail view
+│   │   │   ├── ResourceBar.tsx # ✅ Resource display panel
+│   │   │   └── Connection.tsx  # TODO: Resource flow lines
 │   │   │
-│   │   ├── ui/
+│   │   ├── ui/                 # TODO: Reusable components
 │   │   │   ├── Button.tsx
 │   │   │   ├── Modal.tsx
-│   │   │   ├── Menu.tsx
 │   │   │   └── Toast.tsx
 │   │   │
-│   │   └── screens/
+│   │   └── screens/            # TODO: Game screens
 │   │       ├── MainMenu.tsx
 │   │       ├── GameScreen.tsx
-│   │       ├── PauseMenu.tsx
-│   │       ├── GameOver.tsx
 │   │       └── Settings.tsx
 │   │
-│   ├── game/
+│   ├── game/                   # TODO: Game logic modules
 │   │   ├── engine.ts           # Core game loop
-│   │   ├── cards.ts            # Card definitions
-│   │   ├── resources.ts        # Resource types & flow
-│   │   ├── grid.ts             # Grid logic
+│   │   ├── resources.ts        # Resource flow calculations
 │   │   ├── connections.ts      # Connection pathfinding
-│   │   ├── production.ts       # Production calculations
-│   │   ├── events.ts           # Random events (survival)
-│   │   └── scoring.ts          # Score calculations
+│   │   └── production.ts       # Production calculations
 │   │
-│   ├── modes/
-│   │   ├── survival.ts         # Survival mode rules
-│   │   ├── builder.ts          # Builder mode rules
-│   │   ├── puzzle.ts           # Puzzle mode rules
-│   │   └── campaign.ts         # Campaign mode rules
+│   ├── modes/                  # TODO: Game mode implementations
+│   │   ├── survival.ts
+│   │   ├── builder.ts
+│   │   └── puzzle.ts
 │   │
-│   ├── data/
-│   │   ├── cards/              # Card JSON definitions
-│   │   ├── puzzles/            # Puzzle level definitions
-│   │   ├── campaign/           # Campaign scenario data
-│   │   └── achievements.ts     # Achievement definitions
+│   ├── data/                   # TODO: Card & level data
+│   │   ├── cards/              
+│   │   └── puzzles/
 │   │
 │   ├── store/
-│   │   ├── gameStore.ts        # Active game state
-│   │   ├── progressStore.ts    # Meta-progression
-│   │   └── settingsStore.ts    # User preferences
+│   │   ├── gameStore.ts        # ✅ Complete game state
+│   │   ├── progressStore.ts    # TODO: Meta-progression
+│   │   └── settingsStore.ts    # TODO: User preferences
 │   │
-│   ├── hooks/
-│   │   ├── useGame.ts          # Game state hook
-│   │   ├── useAudio.ts         # Sound management
-│   │   ├── useDrag.ts          # Card dragging
-│   │   └── useOffline.ts       # Offline detection
+│   ├── types/
+│   │   └── game.ts             # ✅ All TypeScript interfaces
 │   │
-│   ├── utils/
-│   │   ├── storage.ts          # LocalStorage wrapper
-│   │   ├── random.ts           # Seeded random
-│   │   ├── pathfinding.ts      # A* for connections
-│   │   └── analytics.ts        # Event tracking (optional)
+│   ├── hooks/                  # TODO: Custom React hooks
+│   │   ├── useGame.ts
+│   │   └── useDrag.ts
 │   │
-│   ├── styles/
-│   │   └── globals.css         # Tailwind imports + custom
+│   ├── utils/                  # TODO: Utilities
+│   │   ├── storage.ts
+│   │   └── pathfinding.ts
 │   │
-│   ├── App.tsx                 # Root component
-│   ├── main.tsx                # Entry point
-│   └── vite-env.d.ts           # Vite types
+│   ├── App.tsx                 # ✅ Root with gesture support
+│   ├── main.tsx                # ✅ Entry point
+│   ├── index.css               # ✅ Tailwind + custom styles
+│   └── vite-env.d.ts           # ✅ Vite types
 │
-├── tests/
-│   ├── game/
-│   │   ├── engine.test.ts
-│   │   ├── production.test.ts
-│   │   └── connections.test.ts
-│   └── components/
-│       └── Card.test.tsx
-│
-├── .github/
-│   └── workflows/
-│       └── deploy.yml          # CI/CD pipeline
-│
-├── index.html
-├── package.json
-├── tsconfig.json
-├── vite.config.ts
-├── tailwind.config.js
-├── postcss.config.js
-└── README.md
+├── index.html                  # ✅
+├── package.json                # ✅
+├── tsconfig.json               # ✅
+├── tsconfig.node.json          # ✅
+├── vite.config.ts              # ✅
+├── tailwind.config.js          # ✅ Custom game colors
+├── postcss.config.js           # ✅
+└── README.md                   # ✅ Updated
+
+✅ = Implemented
+TODO = Planned for future phases
 ```
 
 ---
 
 ## 3. State Management
 
+### Current Implementation Status
+
+**✅ Phases 0-2 Complete** - Core systems operational:
+
+#### Implemented Features
+1. **Grid System** (30×30 tiles)
+   - Scrollable fullscreen view
+   - Terrain generation (randomized)
+   - Coordinate display on each tile
+   - Drag-and-drop support
+   - Tile selection with visual feedback
+
+2. **Resource Node Generation**
+   - 3-Tier rarity system (Common/Uncommon/Rare)
+   - Auto-placement on map initialization
+   - 5 water sources, 4 iron ore, 4 coal, 3 stone
+   - Stationary nodes (cannot be moved)
+   - Tier affects yield: 100%/150%/200%
+
+3. **Card System**
+   - 7 building types (Miner, Smelter, Foundry, Constructor, Power Plant, Conveyor, Splitter)
+   - Drag-and-drop from hand to grid
+   - Cards movable between tiles
+   - Placement validation (no overlap)
+   - Resource nodes upgradeable to Miners
+
+4. **UI/UX System**
+   - Floating action buttons (💎 Resources, 🏗️ Buildings)
+   - Slide-in panels with smooth animations
+   - Mobile gesture support (swipe up/down)
+   - Trading card-style modals
+   - Backdrop blur effects
+
+5. **State Management**
+   - Zustand store with all game state
+   - TypeScript interfaces for type safety
+   - Immutable state updates
+   - Grid and card synchronization
+
 ### Complete Type Definitions Reference
 
 Copy these to your project for full type safety:
 
 ```typescript
-// src/types/index.ts - Complete type system
+// src/types/game.ts - Implemented types
 
 // ============= Position & Grid =============
 
@@ -930,12 +948,7 @@ Use this CSS for high-contrast mode:
 
 ---
 
-## 12. Decision Log Template
-
-Track important decisions to remember why you did things:
-
-```markdown
-## Decision Log
+## 12. Decision Log
 
 ### 2026-01-21: Chose Zustand over Redux
 **Context:** Need state management for game state
@@ -948,14 +961,171 @@ Track important decisions to remember why you did things:
 **Trade-offs:**
   - Less community resources than Redux
   - Smaller ecosystem of middleware
-**Status:** Implemented
+**Status:** ✅ Implemented
 
-### 2026-01-23: Skipped animations for MVP
-**Context:** Phase 1 grid implementation
-**Decision:** No tile reveal animations in Phase 1
+### 2026-01-21: Fullscreen Grid Design
+**Context:** Initial grid layout discussion
+**Decision:** Made grid fullscreen with floating menus instead of traditional layout
 **Reasoning:**
-  - Want to test core mechanics first
-  - Animations can wait for Phase 6 polish
+  - Maximizes playable space (30×30 grid needs room)
+  - Better mobile experience (more content visible)
+  - Modern UI pattern (like Google Maps, Figma)
+  - Gesture-friendly (swipe to reveal panels)
+**Trade-offs:**
+  - Less immediately obvious where UI controls are
+  - Requires onboarding hints for new users
+**Status:** ✅ Implemented
+
+### 2026-01-21: Removed Terrain Colors
+**Context:** Grid visual design
+**Decision:** Use uniform gray grid instead of terrain-colored tiles
+**Reasoning:**
+  - Cleaner, more factory-builder aesthetic
+  - Reduces visual noise
+  - Focus on cards/buildings, not terrain
+  - Better contrast for card colors
+**Trade-offs:**
+  - Less visually interesting empty tiles
+  - Terrain types no longer visible at a glance
+**Status:** ✅ Implemented
+
+### 2026-01-21: 3-Tier Resource System
+**Context:** Making resource nodes interesting
+**Decision:** Add Common/Uncommon/Rare tiers to resource nodes
+**Reasoning:**
+  - Adds strategic depth (hunt for rare nodes)
+  - Visual variety on the map
+  - Encourages exploration
+  - Familiar system (like loot rarities)
+**Implementation:**
+  - Tier 1: 50% spawn, 100% yield, gray border
+  - Tier 2: 35% spawn, 150% yield, blue border + ★★
+  - Tier 3: 15% spawn, 200% yield, gold border + ★★★
+**Status:** ✅ Implemented
+
+### 2026-01-21: Trading Card Modal System
+**Context:** How to show building details
+**Decision:** Pokemon/Magic-style trading cards instead of simple tooltips
+**Reasoning:**
+  - More engaging and "game-like"
+  - Room for stats, lore, upgrades
+  - Fits card game theme
+  - Mobile-friendly (big tap targets)
+**Trade-offs:**
+  - Takes up more screen space
+  - Slower than hover tooltips
+**Status:** ✅ Implemented with upgrade slots
+
+### 2026-01-21: Conveyor System Planned
+**Context:** How buildings connect
+**Decision:** Use conveyor/splitter cards for resource flow (not auto-connect)
+**Reasoning:**
+  - More strategic gameplay (layout matters)
+  - Visual representation of resource flow
+  - Factorio-inspired mechanics
+  - Adds puzzle element
+**Status:** 🚧 Cards added, connections TODO Phase 3
+
+---
+
+## 13. Implementation Summary (Current Status)
+
+### What's Working Now ✅
+
+**Core Systems:**
+- ✅ Vite + React 18 + TypeScript build system
+- ✅ Tailwind CSS with custom game theme
+- ✅ Zustand state management
+- ✅ TypeScript type safety throughout
+
+**Game Features:**
+- ✅ 30×30 scrollable grid world
+- ✅ 3-tier resource node generation (16 nodes total)
+- ✅ 7 building types in hand
+- ✅ Drag-and-drop card placement
+- ✅ Trading card detail modals
+- ✅ Resource node upgrade system
+- ✅ Mobile gesture support (swipe menus)
+- ✅ Floating UI buttons
+- ✅ Resource bar display
+
+**Technical Polish:**
+- ✅ Smooth animations (slide-in panels, card hover)
+- ✅ Backdrop blur effects
+- ✅ Responsive design (mobile + desktop)
+- ✅ TypeScript compilation with no errors
+- ✅ Clean component architecture
+
+### Next Steps (Phase 3) 🚧
+
+**Critical Path:**
+1. Implement resource flow logic
+2. Add conveyor connection system
+3. Production calculations per tick
+4. Resource consumption mechanics
+5. Visual connection lines between buildings
+6. Power grid system
+
+**Nice-to-Have:**
+- Save/load system (localStorage)
+- Sound effects
+- Card unlock progression
+- Tutorial system
+- Settings panel
+
+### Known Limitations
+
+- No resource production yet (static display)
+- Conveyors placed but don't connect
+- No game loop/tick system
+- No win/lose conditions
+- No persistence (refresh loses state)
+- Not deployed to production yet
+
+---
+
+## 14. Files Created (Phases 0-2)
+
+```
+✅ Configuration Files
+├── package.json
+├── tsconfig.json
+├── tsconfig.node.json
+├── vite.config.ts
+├── tailwind.config.js
+├── postcss.config.js
+├── index.html
+└── .gitignore
+
+✅ Source Files
+├── src/
+│   ├── main.tsx
+│   ├── App.tsx
+│   ├── index.css
+│   ├── vite-env.d.ts
+│   ├── types/game.ts
+│   ├── store/gameStore.ts
+│   └── components/game/
+│       ├── Grid.tsx
+│       ├── Tile.tsx
+│       ├── Hand.tsx
+│       ├── ResourceBar.tsx
+│       └── CardModal.tsx
+
+✅ Documentation
+├── README.md (updated)
+├── 00-QUICK-START.md
+├── 01-GAME-DESIGN-DOCUMENT.md
+├── 02-TECHNICAL-ARCHITECTURE.md (this file - updated)
+├── 03-DEVELOPMENT-ROADMAP.md (updated)
+├── 04-EXTERNAL-RESOURCES.md
+├── 05-CARD-DATABASE.md
+└── 06-TROUBLESHOOTING.md
+```
+
+**Total Lines of Code:** ~1,200 LOC (components + types + store)
+**Development Time:** ~6 hours (Phases 0-2)
+**Completion:** 25% of MVP (2 of 8 phases done)
   - Faster to implement and test
 **Trade-offs:**
   - Less polished first impression
