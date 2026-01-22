@@ -20,7 +20,6 @@ export interface Tile {
   position: Position;
   terrain: TerrainType;
   state: TileState;
-  cardId?: string;
 }
 
 // Resource types

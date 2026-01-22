@@ -70,27 +70,7 @@ export function Grid() {
       }));
     } else {
       // Placing new card from hand
-      const targetCard = placedCards.find(
-        (c) => c.position.x === position.x && c.position.y === position.y
-      );
-
-      // If dropping a miner on a resource node, upgrade it
-      if (cardInstanceId === 'miner' && targetCard?.isStationary) {
-        useGameStore.setState((state) => ({
-          placedCards: state.placedCards.map((c) =>
-            c.position.x === position.x && c.position.y === position.y
-              ? { ...c, definitionId: 'miner', isStationary: false }
-              : c
-          ),
-        }));
-        setSelectedPosition(null);
-      } else {
-        // Normal placement on empty tile
-        const targetTile = grid[position.y]?.[position.x];
-        if (targetTile?.state !== 'occupied') {
-          placeCard(cardInstanceId, position);
-        }
-      }
+      placeCard(cardInstanceId, position);
     }
 
     window.draggedCard = null;
@@ -131,14 +111,9 @@ export function Grid() {
           }}
           onUpgrade={() => {
             if (viewingCard.isStationary && viewingCard.position) {
-              // Upgrade resource node to miner
-              useGameStore.setState((state) => ({
-                placedCards: state.placedCards.map((c) =>
-                  c.instanceId === viewingCard.instanceId
-                    ? { ...c, definitionId: 'miner', isStationary: false }
-                    : c
-                ),
-              }));
+              // Add miner or extractor to resource node
+              const extractorType = viewingCard.definitionId === 'water_source' ? 'extractor' : 'miner';
+              placeCard(extractorType, viewingCard.position);
             }
           }}
         />

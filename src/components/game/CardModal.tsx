@@ -18,7 +18,7 @@ const cardStyles: Record<string, {
     border: 'border-blue-300',
     title: 'Water Source',
     type: 'Resource Node',
-    description: 'Natural spring providing fresh water. Can be upgraded with a miner to extract water continuously.',
+    description: 'Natural spring providing fresh water. Place an extractor here to pump water continuously.',
   },
   iron_ore_deposit: {
     gradient: 'from-orange-500 via-orange-600 to-orange-700',
@@ -46,7 +46,14 @@ const cardStyles: Record<string, {
     border: 'border-yellow-300',
     title: 'Miner',
     type: 'Extraction Building',
-    description: 'Extracts resources from deposits. Connect to conveyors to transport materials.',
+    description: 'Extracts resources from ore deposits, coal seams, and stone quarries. Connect to conveyors to transport materials.',
+  },
+  extractor: {
+    gradient: 'from-cyan-400 via-cyan-500 to-cyan-600',
+    border: 'border-cyan-300',
+    title: 'Extractor',
+    type: 'Extraction Building',
+    description: 'Pumps water from water sources. Connect to conveyors to transport water to processing facilities.',
   },
   smelter: {
     gradient: 'from-red-400 via-red-500 to-red-600',
@@ -222,7 +229,7 @@ export function CardModal({ card, onClose, onUpgrade }: CardModalProps) {
             {/* Upgrade Slots */}
             <div className="bg-purple-50 rounded-lg p-3 border-2 border-purple-300">
               <div className="text-xs font-bold text-purple-700 mb-2 uppercase">
-                {card.isStationary ? 'Upgrade with Miner' : 'Upgrade Slots'}
+                {card.isStationary ? 'Add Extraction Building' : 'Upgrade Slots'}
               </div>
               {card.isStationary ? (
                 <button
@@ -232,7 +239,7 @@ export function CardModal({ card, onClose, onUpgrade }: CardModalProps) {
                   }}
                   className="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-bold py-3 px-4 rounded-lg hover:from-yellow-500 hover:to-yellow-700 transition-all transform hover:scale-105 shadow-lg"
                 >
-                  ⛏️ Place Miner Here
+                  {card.definitionId === 'water_source' ? '💦 Place Extractor Here' : '⛏️ Place Miner Here'}
                 </button>
               ) : (
                 <div className="grid grid-cols-3 gap-2">

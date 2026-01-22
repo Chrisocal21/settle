@@ -148,7 +148,6 @@ export const useGameStore = create<GameState>((set, get) => ({
     resourceNodes.forEach((node) => {
       const tile = grid[node.position.y][node.position.x];
       tile.state = 'occupied';
-      tile.cardId = node.instanceId;
     });
     
     set({
@@ -157,7 +156,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       resources: { ...initialResources },
       population: 1,
       maxPopulation: 2,
-      hand: ['miner', 'smelter', 'foundry', 'constructor', 'power_plant', 'conveyor', 'splitter'],
+      hand: ['miner', 'extractor', 'smelter', 'foundry', 'constructor', 'power_plant', 'conveyor', 'splitter'],
       placedCards: resourceNodes,
       mode,
       turn: 0,
@@ -190,6 +189,27 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   placeCard: (cardId, position) => {
     const state = get();
+    
+    // Check if there's already a card at this position
+    const cardsAtPosition = state.placedCards.filter(
+      (c) => c.position.x === position.x && c.position.y === position.y
+    );
+    
+    // Check if placing on a resource node
+    const resourceNode = cardsAtPosition.find(
+      (c) => c.isStationary && ['water_source', 'iron_ore_deposit', 'coal_deposit', 'stone_quarry'].includes(c.definitionId)
+    );
+    
+    // Allow placement if tile is empty OR correct extractor type on resource
+    const canPlace = cardsAtPosition.length === 0 || 
+      (resourceNode?.definitionId === 'water_source' && cardId === 'extractor') ||
+      (resourceNode && resourceNode.definitionId !== 'water_source' && cardId === 'miner');
+    
+    if (!canPlace) {
+      console.log('Cannot place card here - tile occupied');
+      return;
+    }
+    
     const newCard: PlacedCard = {
       instanceId: `${cardId}-${Date.now()}`,
       definitionId: cardId,
@@ -201,7 +221,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       grid: state.grid.map((row) =>
         row.map((tile) =>
           tile.position.x === position.x && tile.position.y === position.y
-            ? { ...tile, state: 'occupied' as const, cardId: newCard.instanceId }
+            ? { ...tile, state: 'occupied' as const }
             : tile
         )
       ),

@@ -17,6 +17,7 @@ const cardDisplay: Record<string, { emoji: string; color: string; name: string }
   
   // Player buildings
   miner: { emoji: '⛏️', color: 'bg-yellow-500', name: 'Miner' },
+  extractor: { emoji: '💦', color: 'bg-cyan-500', name: 'Extractor' },
   smelter: { emoji: '🔥', color: 'bg-red-500', name: 'Smelter' },
   foundry: { emoji: '🏭', color: 'bg-red-700', name: 'Foundry' },
   constructor: { emoji: '🏗️', color: 'bg-blue-600', name: 'Constructor' },
@@ -27,7 +28,7 @@ const cardDisplay: Record<string, { emoji: string; color: string; name: string }
 
 export function Tile({ tile, onDrop, isSelected, onClick }: TileProps) {
   const placedCards = useGameStore((state) => state.placedCards);
-  const cardOnTile = placedCards.find(
+  const cardsOnTile = placedCards.filter(
     (c) => c.position.x === tile.position.x && c.position.y === tile.position.y
   );
 
@@ -46,11 +47,6 @@ export function Tile({ tile, onDrop, isSelected, onClick }: TileProps) {
     onDrop(tile.position);
   };
 
-  const cardInfo = cardOnTile ? cardDisplay[cardOnTile.definitionId] : null;
-  const tier = cardOnTile?.tier || 1;
-  
-  // Tier indicators
-  const tierStars = '★'.repeat(tier);
   const tierColors = {
     1: 'ring-gray-400',
     2: 'ring-blue-400',
@@ -70,7 +66,6 @@ export function Tile({ tile, onDrop, isSelected, onClick }: TileProps) {
         bg-gray-50
         transition-all
         ${isSelected ? 'ring-4 ring-green-400 bg-green-50' : ''}
-        ${cardOnTile?.tier && cardOnTile.tier > 1 ? `ring-2 ${tierColors[cardOnTile.tier as keyof typeof tierColors]}` : ''}
         hover:bg-gray-100
         cursor-pointer
       `}
@@ -79,36 +74,100 @@ export function Tile({ tile, onDrop, isSelected, onClick }: TileProps) {
         {tile.position.x},{tile.position.y}
       </div>
       
-      {cardOnTile && cardInfo && (
-        <div
-          draggable={!cardOnTile.isStationary}
-          onDragStart={(e) => {
-            if (cardOnTile.isStationary) {
-              e.preventDefault();
-              return;
-            }
-            e.dataTransfer.setData('cardInstanceId', cardOnTile.instanceId);
-          }}
-          className={`
-            absolute inset-0.5
-            ${cardInfo.color} 
-            ${cardOnTile.isStationary ? 'border-2 border-dashed border-yellow-400' : 'border border-gray-900'} 
-            rounded
-            ${!cardOnTile.isStationary ? 'cursor-move hover:scale-105' : 'cursor-pointer'}
-            flex flex-col items-center justify-center 
-            text-white font-bold
-            transition-transform
-          `}
-          title={cardOnTile.isStationary ? `${cardInfo.name} (Tier ${tier})` : cardInfo.name}
-        >
-          <div className="text-xl">{cardInfo.emoji}</div>
-          {cardOnTile.tier && cardOnTile.tier > 1 && (
-            <div className="text-[8px] text-yellow-300 absolute top-0 right-0.5">
-              {tierStars}
-            </div>
-          )}
-          <div className="text-[6px]">{cardInfo.name}</div>
-        </div>
+      {cardsOnTile.length > 0 && (
+        <>
+          {/* Render resource nodes first (full size) */}
+          {cardsOnTile.filter(c => c.isStationary).map((card) => {
+            const cardInfo = cardDisplay[card.definitionId];
+            const tier = card.tier || 1;
+            const tierStars = '★'.repeat(tier);
+            
+            return (
+              <div
+                key={card.instanceId}
+                className={`
+                  absolute inset-0.5
+                  ${cardInfo.color} 
+                  border-2 border-dashed border-yellow-400
+                  rounded
+                  cursor-pointer
+                  flex flex-col items-center justify-center 
+                  text-white font-bold
+                  ${card.tier && card.tier > 1 ? `ring-2 ${tierColors[card.tier as keyof typeof tierColors]}` : ''}
+                `}
+                title={`${cardInfo.name} (Tier ${tier})`}
+              >
+                <div className="text-xl">{cardInfo.emoji}</div>
+                {card.tier && card.tier > 1 && (
+                  <div className="text-[8px] text-yellow-300 absolute top-0 right-0.5">
+                    {tierStars}
+                  </div>
+                )}
+                <div className="text-[6px]">{cardInfo.name}</div>
+              </div>
+            );
+          })}
+          
+          {/* Render miners/extractors as small overlays */}
+          {cardsOnTile.filter(c => ['miner', 'extractor'].includes(c.definitionId)).map((card) => {
+            const cardInfo = cardDisplay[card.definitionId];
+            
+            return (
+              <div
+                key={card.instanceId}
+                draggable
+                onDragStart={(e) => {
+                  e.dataTransfer.setData('cardInstanceId', card.instanceId);
+                }}
+                className={`
+                  absolute bottom-0.5 right-0.5
+                  w-6 h-6
+                  ${cardInfo.color} 
+                  border-2 border-white
+                  rounded
+                  cursor-move hover:scale-110
+                  flex items-center justify-center 
+                  text-white
+                  transition-transform
+                  shadow-lg
+                `}
+                style={{ zIndex: 10 }}
+                title={cardInfo.name}
+              >
+                <div className="text-sm">{cardInfo.emoji}</div>
+              </div>
+            );
+          })}
+          
+          {/* Render other buildings normally */}
+          {cardsOnTile.filter(c => !c.isStationary && !['miner', 'extractor'].includes(c.definitionId)).map((card) => {
+            const cardInfo = cardDisplay[card.definitionId];
+            
+            return (
+              <div
+                key={card.instanceId}
+                draggable
+                onDragStart={(e) => {
+                  e.dataTransfer.setData('cardInstanceId', card.instanceId);
+                }}
+                className={`
+                  absolute inset-0.5
+                  ${cardInfo.color} 
+                  border border-gray-900
+                  rounded
+                  cursor-move hover:scale-105
+                  flex flex-col items-center justify-center 
+                  text-white font-bold
+                  transition-transform
+                `}
+                title={cardInfo.name}
+              >
+                <div className="text-xl">{cardInfo.emoji}</div>
+                <div className="text-[6px]">{cardInfo.name}</div>
+              </div>
+            );
+          })}
+        </>
       )}
     </div>
   );
