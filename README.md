@@ -40,14 +40,32 @@ npm run dev
 # Opens at http://localhost:5173
 ```
 
-**Current Status:** ✅ Phases 0-2 Complete
-- Fullscreen grid-based world map (30×30)
-- Drag-and-drop card placement system
-- 3-tier resource node generation
-- Trading card-style modals
-- Mobile gesture support
+**Current Status:** ✅ Phases 0-2 Complete, Phase 3 In Progress (75%)
 
-See [00-QUICK-START.md](./00-QUICK-START.md) for complete walkthrough.
+**What's Working:**
+- ✅ Fullscreen grid-based world map (30×30 scrollable)
+- ✅ Drag-and-drop card placement system
+- ✅ 3-tier resource node generation (Common/Uncommon/Rare)
+- ✅ Trading card-style detail modals
+- ✅ Resource production with tier multipliers (1x/2x/3x)
+- ✅ Storage system (Miners: 100, Storage buildings: 500/1000/2000)
+- ✅ Manual resource collection (click miners to collect)
+- ✅ Player inventory UI (1000 capacity popup modal)
+- ✅ Auto-transfer to adjacent storage (at 80% capacity)
+- ✅ Processing buildings (Smelters, Foundries) with recipes
+- ✅ Drag-to-connect conveyor system (Shift+Click)
+- ✅ Visual connection lines (green dashed SVG overlay)
+- ✅ Game tick loop (1 second intervals)
+- ✅ Mobile gesture support (swipe for menus)
+
+**What's Next:**
+- ⏳ Enhanced conveyor logic (speed variations, visual flow)
+- ⏳ More processing recipes and building types
+- ⏳ Population & survival mechanics
+- ⏳ Building upgrades and tech tree
+- ⏳ Win/lose conditions
+
+See [00-QUICK-START.md](./00-QUICK-START.md) for setup and [03-DEVELOPMENT-ROADMAP.md](./03-DEVELOPMENT-ROADMAP.md) for detailed progress.
 
 ---
 

@@ -1,5 +1,27 @@
 # Connection System - Drag-to-Connect Conveyors
 
+**Status:** ✅ Base Implementation Complete (More Features Coming)
+
+## Current Implementation
+
+### What Works Now
+- **Shift+Click** buildings to create connections (start → end)
+- **Green dashed lines** show active connections with dots at endpoints
+- **Yellow indicator banner** appears when in connection mode
+- **Automatic resource transfer** at 1 item/second through connections
+- **SVG overlay rendering** for visual connection lines
+- **Connection data structure** stores from/to positions, speed, and type
+
+### Known Limitations (Future Improvements)
+- ❌ Cannot delete connections yet (need right-click handler)
+- ❌ No visual resource flow animation (just static lines)
+- ❌ Fixed transfer speed (always 1 item/sec)
+- ❌ No connection capacity limits
+- ❌ No priority routing or smart distribution
+- ❌ No different connection types (pipes vs belts)
+
+---
+
 ## How to Use
 
 Instead of placing conveyor cards, you can now create connections between buildings:
@@ -33,8 +55,27 @@ Instead of placing conveyor cards, you can now create connections between buildi
 - Connect smelter → storage to collect iron bars
 - Chain connections for complex production lines
 
-## Future Enhancements
-- Right-click connections to delete them
-- Adjust transfer speeds
-- Different connection types (pipes for fluids, belts for items)
-- Visual resource flow animation along connections
+## Future Enhancements (Ideas)
+
+### Phase 4 Improvements
+- **Delete connections:** Right-click connection line to remove it
+- **Connection info:** Hover over line to see transfer rate and contents
+- **Adjust speeds:** Upgrade connections for faster transfer (1→5→10 items/sec)
+- **Visual flow:** Animated dots flowing along connection lines
+
+### Phase 5 Advanced Features
+- **Connection types:** 
+  - Conveyors (items) - what we have now
+  - Pipes (fluids) - for water, oil, etc.
+  - Power lines (electricity)
+- **Splitters:** One input → multiple outputs with ratio control
+- **Mergers:** Multiple inputs → one output with priority
+- **Filters:** Only allow specific resources through
+- **Buffer zones:** Small storage along connection lines
+
+### Long-Term Vision
+- **Smart routing:** Auto-path around obstacles
+- **Connection blueprints:** Save/load connection patterns
+- **Color coding:** Different colors for different resource types
+- **Connection statistics:** Track total items transferred
+- **Overflow handling:** What happens when destination is full?

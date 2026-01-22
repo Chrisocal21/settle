@@ -2,6 +2,31 @@
 
 > A card-based civilization builder. From hands to empires.
 
+**🔵 Status:** Design + Early Playable Build  
+**📅 Updated:** January 21, 2026 - Phase 3 Progress
+
+### Implementation Progress
+**Currently Built (Base Systems - Functional but Basic):**
+- ✅ Grid-based world with 3-tier resource nodes
+- ✅ Card placement and drag-drop mechanics  
+- ✅ Resource production (mining, extraction) with tier multipliers
+- ✅ Storage buildings with capacity management (100-2000 units)
+- ✅ Manual collection (click miners) and auto-transfer systems
+- ✅ Processing buildings (smelters/foundries) with recipes
+- ✅ Drag-to-connect conveyor system (Shift+Click)
+- ✅ Inventory UI (1000 capacity popup modal)
+- ✅ Game loop running at 1-second ticks
+
+**Not Yet Built (Design Stage):**
+- ⏳ Population mechanics & survival mode
+- ⏳ Tech tree and research system
+- ⏳ Building upgrades and tiers
+- ⏳ Multiple game modes (puzzle, campaign)
+- ⏳ Win/lose conditions
+- ⏳ Save/load system
+- ⏳ Power grid system
+- ⏳ Disasters and random events
+
 ---
 
 ## 1. Concept Overview

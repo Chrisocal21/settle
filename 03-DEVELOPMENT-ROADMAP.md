@@ -288,7 +288,32 @@ src/
 ---
 
 ## Phase 3: Resource Flow System ⏳ IN PROGRESS (75% Complete)
-**Time: 1 week** | **Actual: 4 hours so far**
+**Time: 1 week** | **Actual: 6 hours so far**
+
+### 🎯 What's Been Built (Base Systems)
+
+All features are **functional but basic** - they work for core gameplay but need polish, balance, and additional features:
+
+**Core Production Loop:**
+- Miners/extractors produce resources every tick (1 second intervals)
+- Storage fills up to capacity limits (visual indicators show %)
+- Auto-transfer when miners reach 80% capacity
+- Manual collection by clicking miner overlays
+- Processing buildings consume inputs, produce outputs
+
+**Connection System:**
+- Shift+Click buildings to create connections
+- Green dashed lines show active connections
+- Resources transfer at 1 item/second through connections
+- Yellow indicator shows when in connection mode
+
+**What's Missing (Future Enhancements):**
+- Connection deletion (currently can only add)
+- Variable transfer speeds and connection types
+- Visual resource flow animations
+- Connection capacity limits
+- Priority routing and smart distribution
+- Splitter/merger logic for complex chains
 
 ### Goals
 - Resources as first-class concept ✅
@@ -371,8 +396,57 @@ src/
 
 ---
 
-## Phase 4: Production Chains (Next Up)
-**Time: 1 week**
+## Phase 4: Production Chains & Population (Next Up)
+**Estimated Time: 1-2 weeks**
+
+### 🚀 Next Development Focus
+
+**High Priority (Core Gameplay):**
+1. **Population System** - Settlers consume food/water, work buildings
+2. **Building Upgrades** - Click buildings to upgrade (Tier 1→2→3)
+3. **Recipe Expansion** - More processing chains (wood→planks, stone→bricks)
+4. **Tech Tree (Simple)** - Unlock new buildings by researching
+5. **Win Conditions** - Reach population X, produce Y resources
+
+**Medium Priority (Polish):**
+6. **Connection Management** - Right-click to delete connections
+7. **Visual Feedback** - Particles flowing through conveyors
+8. **Building Tooltips** - Hover to see production rates/recipes
+9. **Efficiency Indicators** - Show if buildings are idle/working
+10. **Sound Effects** - Click, place, produce sounds
+
+**Low Priority (Future):**
+11. **Power System** - Buildings need electricity to run
+12. **Multiple Maps** - Different starting conditions
+13. **Multiplayer Vision** - Shared world, trading
+14. **Automation Research** - Auto-routing, smart conveyors
+15. **Disasters** - Fires, droughts, equipment failures
+
+### Ideas for Unique Mechanics
+
+**1. Time Dilation Cards**
+- "Fast Forward" card: 2x production for 30 seconds
+- "Freeze Time" card: Pause decay, plan layouts
+
+**2. Building Synergies**
+- Adjacent smelters share heat (-20% coal cost)
+- Farms near water sources produce 50% more
+- Industrial clusters provide efficiency bonuses
+
+**3. Crisis Management**
+- Random events require quick decisions
+- "Hungry workers" - double food consumption for 60s
+- "Equipment malfunction" - repair or lose production
+
+**4. Prestige System**
+- "Ascend" your settlement to restart with bonuses
+- Unlock permanent upgrades (faster gathering, more storage)
+- Climb leaderboard for fastest ascensions
+
+**5. Card Crafting**
+- Combine duplicate cards to create upgraded versions
+- Rarity system (Common/Uncommon/Rare/Epic)
+- Special effects on rare cards (rainbow smelter produces 2x)
 
 ### Goals
 

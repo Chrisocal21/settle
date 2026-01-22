@@ -112,42 +112,67 @@ TODO = Planned for future phases
 
 ### Current Implementation Status
 
-**✅ Phases 0-2 Complete** - Core systems operational:
+**✅ Phases 0-2 Complete, Phase 3 In Progress (75%)** - Core production loop functional:
 
-#### Implemented Features
-1. **Grid System** (30×30 tiles)
-   - Scrollable fullscreen view
-   - Terrain generation (randomized)
-   - Coordinate display on each tile
-   - Drag-and-drop support
-   - Tile selection with visual feedback
+#### What's Actually Built (Base Systems - Working but Basic)
 
-2. **Resource Node Generation**
-   - 3-Tier rarity system (Common/Uncommon/Rare)
-   - Auto-placement on map initialization
-   - 5 water sources, 4 iron ore, 4 coal, 3 stone
-   - Stationary nodes (cannot be moved)
-   - Tier affects yield: 100%/150%/200%
+**1. Grid & World (Fully Functional)**
+   - 30×30 scrollable grid with revealed tiles
+   - Resource node generation with 3-tier rarity system
+   - Coordinate display and visual feedback
+   - Drag-and-drop card placement with validation
+   - Tile state management (revealed/occupied)
 
-3. **Card System**
-   - 7 building types (Miner, Smelter, Foundry, Constructor, Power Plant, Conveyor, Splitter)
-   - Drag-and-drop from hand to grid
-   - Cards movable between tiles
-   - Placement validation (no overlap)
-   - Resource nodes upgradeable to Miners
+**2. Resource Production (Core Loop Working)**
+   - Miners/extractors produce resources every tick (1 second)
+   - Tier-based production rates (Tier 1: 1/sec, Tier 2: 2/sec, Tier 3: 3/sec)
+   - Storage capacity system (Miners: 100, Storage: 500/1000/2000)
+   - Visual storage indicators (fill bars, % display)
+   - Water production cap (stops at 200 to force usage)
+   - Stone byproduct from mining (20% yield)
 
-4. **UI/UX System**
-   - Floating action buttons (💎 Resources, 🏗️ Buildings)
-   - Slide-in panels with smooth animations
-   - Mobile gesture support (swipe up/down)
-   - Trading card-style modals
-   - Backdrop blur effects
+**3. Storage & Collection (Auto + Manual)**
+   - Click miners to manually collect resources
+   - Auto-transfer to adjacent storage at 80% capacity
+   - Player inventory (1000 capacity) with popup modal UI
+   - Color-coded resource tiles in inventory
+   - Capacity bar with green/yellow/red states
 
-5. **State Management**
-   - Zustand store with all game state
-   - TypeScript interfaces for type safety
-   - Immutable state updates
-   - Grid and card synchronization
+**4. Processing Buildings (Recipe System)**
+   - Smelters: 2 iron ore + 1 coal → 1 iron bar (3 seconds)
+   - Foundries: 3 iron bars + 2 coal → 5 refined bars (5 seconds)
+   - Input validation (check if resources available)
+   - Progress tracking (0-100%)
+   - Output auto-transfer to adjacent storage
+
+**5. Connection System (Drag-to-Connect)**
+   - Shift+Click to create connections between buildings
+   - SVG overlay rendering green dashed lines
+   - Yellow indicator when in connection mode
+   - Resource transfer at 1 item/second through connections
+   - Connection data structure (from/to positions, speed, type)
+
+**6. UI/UX (Mobile-First)**
+   - Floating buttons for inventory (🎒) and buildings (🏗️)
+   - Slide-in hand panel from bottom
+   - Popup modal inventory with resource grid
+   - Touch gesture support (swipe for menus)
+   - Trading card-style detail modals
+   - Visual feedback (hover states, animations)
+
+#### What's NOT Built Yet (Still in Design)
+- Connection deletion (can only add, not remove)
+- Variable connection speeds or priority routing
+- Visual resource flow animations along conveyors
+- Building upgrades and tech tree
+- Population mechanics and consumption
+- Power grid system
+- Win/lose conditions
+- Multiple game modes
+- Save/load system
+- Splitter/merger logic
+- Research system
+- Disasters or random events
 
 ### Complete Type Definitions Reference
 

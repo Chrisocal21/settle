@@ -2,6 +2,24 @@
 
 > Get from zero to running code in 30 minutes
 
+**🎯 Current Build Status:** Phase 3 (75% Complete) - Resource Flow & Storage  
+**🎮 Playable:** Yes! Core production loop working  
+**📱 Mobile:** Fully responsive with touch gestures
+
+---
+
+## What You're Building
+
+A factory-building game where you:
+1. **Place miners** on resource nodes (iron, coal, stone, water)
+2. **Collect resources** by clicking miners (manual collection)
+3. **Build storage** buildings to auto-collect from adjacent miners
+4. **Create connections** (Shift+Click) to transport resources between buildings
+5. **Process materials** in smelters/foundries (iron ore → iron bars)
+6. **Manage inventory** with a 1000-capacity player backpack
+
+**Next Steps:** Population mechanics, tech tree, win/lose conditions
+
 ---
 
 ## Prerequisites Checklist
