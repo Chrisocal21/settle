@@ -126,7 +126,7 @@ export function Grid() {
         <div 
           className="inline-block relative"
           style={{
-            backgroundImage: 'url(/map-fantasy.jpg)',
+            backgroundImage: 'url(/WORLD MAP.png)',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             width: grid[0].length * TILE_SIZE,
