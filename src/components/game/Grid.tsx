@@ -123,7 +123,16 @@ export function Grid() {
   return (
     <>
       <div className="w-full h-full overflow-auto bg-cream relative">
-        <div className="inline-block relative">
+        <div 
+          className="inline-block relative"
+          style={{
+            backgroundImage: 'url(/map-fantasy.jpg)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            width: grid[0].length * TILE_SIZE,
+            height: grid.length * TILE_SIZE,
+          }}
+        >
           {/* SVG overlay for connection lines */}
           <svg 
             className="absolute top-0 left-0 pointer-events-none z-10"

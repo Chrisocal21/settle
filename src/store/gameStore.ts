@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { Tile, PlacedCard, ResourceType, GameMode, Position, Connection } from '../types/game';
 import { getRecipeForBuilding, RECIPES } from '../data/recipes';
+import { MAPS, DEFAULT_MAP } from '../data/maps';
 
 interface GameState {
   // Grid
@@ -58,8 +59,22 @@ const createInitialGrid = (width: number, height: number): Tile[][] => {
   );
 };
 
-// Create stationary resource nodes on the map
-const createResourceNodes = (width: number, height: number): PlacedCard[] => {
+// Create stationary resource nodes on the map from map configuration
+const createResourceNodes = (mapId: string = DEFAULT_MAP): PlacedCard[] => {
+  const mapConfig = MAPS[mapId];
+  if (!mapConfig) return [];
+  
+  return mapConfig.resourceNodes.map((node, i) => ({
+    instanceId: `${node.type}-${i}`,
+    definitionId: node.type,
+    position: node.position,
+    isStationary: true,
+    tier: node.tier,
+  }));
+};
+
+// Keep old function for reference, but not used
+const createResourceNodesOld = (width: number, height: number): PlacedCard[] => {
   const nodes: PlacedCard[] = [];
   
   const getRandomTier = () => {
@@ -159,8 +174,11 @@ export const useGameStore = create<GameState>((set, get) => ({
   isGameOver: false,
   hasWon: false,
 
-  initGame: (mode, width = 25, height = 25) => {
-    const resourceNodes = createResourceNodes(width, height);
+  initGame: (mode, mapId = DEFAULT_MAP) => {
+    const mapConfig = MAPS[mapId];
+    const width = mapConfig.width;
+    const height = mapConfig.height;
+    const resourceNodes = createResourceNodes(mapId);
     const grid = createInitialGrid(width, height);
     
     // Mark tiles with resource nodes as occupied
