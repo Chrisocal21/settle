@@ -165,8 +165,8 @@ export function CardModal({ card, onClose, onUpgrade }: CardModalProps) {
   };
 
   // Get storage contents
-  const storageContents = card.storage || {};
-  const storageUsed = Object.values(storageContents).reduce((sum, val) => sum + val, 0);
+  const storageContents: Record<ResourceType, number> = card.storage || {} as Record<ResourceType, number>;
+  const storageUsed = Object.values(storageContents).reduce((sum, val) => (sum as number) + (val as number), 0) as number;
   const capacity = card.storageCapacity || 0;
   const hasStorage = capacity > 0;
   const fillPercent = capacity > 0 ? Math.floor((storageUsed / capacity) * 100) : 0;
@@ -285,7 +285,8 @@ export function CardModal({ card, onClose, onUpgrade }: CardModalProps) {
                 {Object.keys(storageContents).length > 0 ? (
                   <div className="grid grid-cols-2 gap-2">
                     {Object.entries(storageContents).map(([resource, amount]) => {
-                      if (amount === 0) return null;
+                      const numAmount = amount as number;
+                      if (numAmount === 0) return null;
                       const info = resourceInfo[resource as ResourceType];
                       return (
                         <div 
@@ -293,7 +294,7 @@ export function CardModal({ card, onClose, onUpgrade }: CardModalProps) {
                           className={`${info.color} rounded p-2 text-white text-center border border-white/30`}
                         >
                           <div className="text-lg">{info.emoji}</div>
-                          <div className="text-xs font-bold">{Math.floor(amount)}</div>
+                          <div className="text-xs font-bold">{Math.floor(numAmount)}</div>
                           <div className="text-[8px] opacity-80">{info.name}</div>
                         </div>
                       );
