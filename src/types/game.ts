@@ -30,7 +30,10 @@ export type ResourceType =
   | 'stone'
   | 'coal'
   | 'iron_ore'
-  | 'iron_bars'
+  | 'iron_bar'
+  | 'advanced_metal'
+  | 'component'
+  | 'slag'
   | 'power';
 
 // Card categories
@@ -79,8 +82,9 @@ export interface PlacedCard {
   storageCapacity?: number; // Max storage capacity
   isProcessing?: boolean; // Currently processing resources
   recipe?: {
-    inputs: Record<ResourceType, number>;
-    outputs: Record<ResourceType, number>;
+    recipeId: string; // ID of the recipe being processed
+    inputs: Partial<Record<ResourceType, number>>;
+    outputs: Partial<Record<ResourceType, number>>;
     processingTime: number; // seconds
     progress: number; // 0-100
   };

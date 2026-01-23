@@ -4,6 +4,7 @@ import { Grid } from './components/game/Grid';
 import { ResourceBar } from './components/game/ResourceBar';
 import { Hand } from './components/game/Hand';
 import { Inventory } from './components/game/Inventory';
+import { WinModal } from './components/game/WinModal';
 
 // Global drag state
 declare global {
@@ -15,8 +16,10 @@ declare global {
 function App() {
   const initGame = useGameStore((state) => state.initGame);
   const tick = useGameStore((state) => state.tick);
+  const hasWon = useGameStore((state) => state.hasWon);
   const [showHand, setShowHand] = useState(false);
   const [showInventory, setShowInventory] = useState(false);
+  const [showWinModal, setShowWinModal] = useState(false);
   const [touchStartY, setTouchStartY] = useState<number | null>(null);
 
   useEffect(() => {
@@ -31,6 +34,13 @@ function App() {
     
     return () => clearInterval(interval);
   }, [tick]);
+  
+  // Check for win condition
+  useEffect(() => {
+    if (hasWon) {
+      setShowWinModal(true);
+    }
+  }, [hasWon]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStartY(e.touches[0].clientY);
@@ -145,6 +155,17 @@ function App() {
       <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 text-[10px] text-gray-600 bg-white/90 px-3 py-1 rounded-full pointer-events-none z-20 md:hidden shadow">
         ↑ Buildings | ↓ Resources | Click resources → Drag miner to upgrade
       </div>
+      
+      {/* Win Modal */}
+      {showWinModal && (
+        <WinModal
+          onClose={() => setShowWinModal(false)}
+          onRestart={() => {
+            setShowWinModal(false);
+            initGame('survival', 30, 30);
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -70,16 +70,16 @@ export function Tile({ tile, onDrop, isSelected, onClick }: TileProps) {
       className={`
         relative
         w-14 h-14
-        border border-gray-300
-        bg-gray-50
+        bg-transparent
         transition-all
+        group
         ${isSelected ? 'ring-4 ring-green-400 bg-green-50' : ''}
         ${isProducing ? 'ring-2 ring-green-500 animate-pulse' : ''}
-        hover:bg-gray-100
+        hover:bg-gray-50/30
         cursor-pointer
       `}
     >
-      <div className="absolute top-0 left-0 text-[6px] text-gray-400 font-mono px-0.5">
+      <div className="absolute top-0 left-0 text-[6px] text-gray-400 font-mono px-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
         {tile.position.x},{tile.position.y}
       </div>
       
@@ -165,10 +165,12 @@ export function Tile({ tile, onDrop, isSelected, onClick }: TileProps) {
           {cardsOnTile.filter(c => !c.isStationary && !['miner', 'extractor'].includes(c.definitionId)).map((card) => {
             const cardInfo = cardDisplay[card.definitionId];
             const isStorage = ['storage_small', 'storage_medium', 'storage_large'].includes(card.definitionId);
+            const isProcessing = card.isProcessing || false;
             const storageUsed = card.storage ? Object.values(card.storage).reduce((sum, val) => sum + val, 0) : 0;
             const capacity = card.storageCapacity || 0;
             const fillPercent = capacity > 0 ? (storageUsed / capacity) * 100 : 0;
             const isFull = storageUsed >= capacity;
+            const recipeProgress = card.recipe?.progress || 0;
             
             return (
               <div
@@ -186,6 +188,7 @@ export function Tile({ tile, onDrop, isSelected, onClick }: TileProps) {
                   ${cardInfo.color} 
                   border border-gray-900
                   ${isStorage && isFull ? 'ring-2 ring-orange-500' : ''}
+                  ${isProcessing ? 'ring-2 ring-yellow-400 animate-pulse' : ''}
                   rounded
                   cursor-move hover:scale-105
                   flex flex-col items-center justify-center 
@@ -209,6 +212,16 @@ export function Tile({ tile, onDrop, isSelected, onClick }: TileProps) {
                       {Math.floor(fillPercent)}%
                     </div>
                   </>
+                )}
+                
+                {/* Recipe progress indicator for processing buildings */}
+                {isProcessing && recipeProgress > 0 && (
+                  <div className="absolute bottom-0 left-0 right-0">
+                    <div 
+                      className="h-1 bg-yellow-400 rounded-b transition-all"
+                      style={{ width: `${recipeProgress}%` }}
+                    />
+                  </div>
                 )}
               </div>
             );

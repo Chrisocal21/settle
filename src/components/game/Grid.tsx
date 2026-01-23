@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useGameStore } from '../../store/gameStore';
 import { Tile } from './Tile';
 import { CardModal } from './CardModal';
+import { ConnectionFlow } from './ConnectionFlow';
 import { Position, PlacedCard } from '../../types/game';
 
 export function Grid() {
@@ -117,11 +118,11 @@ export function Grid() {
 
   if (grid.length === 0) return null;
 
-  const TILE_SIZE = 48; // matches Tile component size
+  const TILE_SIZE = 56; // matches Tile component size (w-14 h-14 = 56px)
 
   return (
     <>
-      <div className="w-full h-full overflow-auto bg-gray-100 relative">
+      <div className="w-full h-full overflow-auto bg-cream relative">
         <div className="inline-block relative">
           {/* SVG overlay for connection lines */}
           <svg 
@@ -130,10 +131,16 @@ export function Grid() {
           >
             {/* Render existing connections */}
             {connections.map((conn) => {
-              const fromX = conn.fromPos.x * TILE_SIZE + TILE_SIZE / 2;
-              const fromY = conn.fromPos.y * TILE_SIZE + TILE_SIZE / 2;
-              const toX = conn.toPos.x * TILE_SIZE + TILE_SIZE / 2;
-              const toY = conn.toPos.y * TILE_SIZE + TILE_SIZE / 2;
+              // Look up current card positions dynamically
+              const fromCard = placedCards.find(c => c.instanceId === conn.from);
+              const toCard = placedCards.find(c => c.instanceId === conn.to);
+              
+              if (!fromCard || !toCard) return null;
+              
+              const fromX = fromCard.position.x * TILE_SIZE + TILE_SIZE / 2;
+              const fromY = fromCard.position.y * TILE_SIZE + TILE_SIZE / 2;
+              const toX = toCard.position.x * TILE_SIZE + TILE_SIZE / 2;
+              const toY = toCard.position.y * TILE_SIZE + TILE_SIZE / 2;
 
               return (
                 <g key={conn.id}>
@@ -145,12 +152,32 @@ export function Grid() {
                     stroke="#4ade80"
                     strokeWidth="2"
                     strokeDasharray="4 2"
+                    className="pointer-events-none"
+                  />
+                  {/* Invisible wider line for easier clicking */}
+                  <line
+                    x1={fromX}
+                    y1={fromY}
+                    x2={toX}
+                    y2={toY}
+                    stroke="transparent"
+                    strokeWidth="12"
+                    className="pointer-events-auto cursor-pointer hover:stroke-red-300/30"
+                    onContextMenu={(e) => {
+                      e.preventDefault();
+                      if (window.confirm('Delete this connection?')) {
+                        useGameStore.getState().removeConnection(conn.id);
+                      }
+                    }}
                   />
                   <circle cx={fromX} cy={fromY} r="3" fill="#4ade80" />
                   <circle cx={toX} cy={toY} r="3" fill="#4ade80" />
                 </g>
               );
             })}
+            
+            {/* Animated flow particles */}
+            <ConnectionFlow connections={connections} tileSize={TILE_SIZE} placedCards={placedCards} />
             
             {/* Show connecting line when in connection mode */}
             {connectingFrom && connectingFromPos && (

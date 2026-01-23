@@ -287,42 +287,52 @@ src/
 
 ---
 
-## Phase 3: Resource Flow System ⏳ IN PROGRESS (75% Complete)
-**Time: 1 week** | **Actual: 6 hours so far**
+## Phase 3: Resource Flow System ✅ COMPLETE
+**Time: 1 week** | **Actual: 8 hours**
 
-### 🎯 What's Been Built (Base Systems)
-
-All features are **functional but basic** - they work for core gameplay but need polish, balance, and additional features:
+### 🎯 What's Been Built
 
 **Core Production Loop:**
-- Miners/extractors produce resources every tick (1 second intervals)
-- Storage fills up to capacity limits (visual indicators show %)
-- Auto-transfer when miners reach 80% capacity
-- Manual collection by clicking miner overlays
-- Processing buildings consume inputs, produce outputs
+- ✅ Miners/extractors produce resources every tick (1 second intervals)
+- ✅ Storage fills up to capacity limits (visual indicators show %)
+- ✅ Auto-transfer when miners reach 80% capacity to adjacent storage
+- ✅ Manual collection by clicking miner overlays
+- ✅ Processing buildings consume inputs, produce outputs with recipes
 
 **Connection System:**
-- Shift+Click buildings to create connections
-- Green dashed lines show active connections
-- Resources transfer at 1 item/second through connections
-- Yellow indicator shows when in connection mode
+- ✅ Shift+Click buildings to create conveyor connections
+- ✅ Green dashed lines show active connections
+- ✅ Resources transfer at 1 item/second through connections
+- ✅ Yellow indicator shows when in connection mode
+- ✅ **NEW:** Animated flow particles showing resource movement
+- ✅ **NEW:** Right-click connections to delete them
+- ✅ **NEW:** Visual feedback for processing buildings (pulse + progress bar)
 
-**What's Missing (Future Enhancements):**
-- Connection deletion (currently can only add)
-- Variable transfer speeds and connection types
-- Visual resource flow animations
-- Connection capacity limits
-- Priority routing and smart distribution
-- Splitter/merger logic for complex chains
+**Processing & Recipes:**
+- ✅ Smelter recipe: 2 iron ore + 1 coal → 1 iron bar (10 sec)
+- ✅ Foundry recipe: 2 iron bars → 1 advanced metal (20 sec)
+- ✅ Recipe progress tracking with visual progress bars
+- ✅ Byproducts: slag from smelting, stone from mining
+- ✅ Storage overflow protection
+
+**Visual Polish:**
+- ✅ Invisible grid system (no visible borders/backgrounds)
+- ✅ Hover effects for coordinate display
+- ✅ Clean factory floor aesthetic
+- ✅ Storage fill indicators with percentage
+- ✅ Processing animation (yellow pulse ring)
+- ✅ Recipe progress bars on active buildings
 
 ### Goals
 - Resources as first-class concept ✅
 - Storage system with capacity limits ✅
 - Manual resource collection ✅
 - Inventory management system ✅
-- Visual connections between cards ⏳
-- Resources flow from outputs to inputs ⏳
-- Processing buildings functional ⏳
+- Visual connections between cards ✅
+- Resources flow from outputs to inputs ✅
+- Processing buildings functional ✅
+- Visual flow animations ✅
+- Connection deletion ✅
 
 ### Completed Tasks
 
@@ -337,15 +347,14 @@ All features are **functional but basic** - they work for core gameplay but need
 - [x] Storage buildings (Small: 500, Medium: 1000, Large: 2000)
 - [x] Visual storage indicators (fill bar, red ring when full)
 - [x] Inventory UI popup modal
-
-### In Progress Tasks
-
-- [ ] Storage building functionality (accept resources)
-- [ ] Conveyor belt system (connect buildings)
-- [ ] Visual resource flow animations
-- [ ] Processing buildings (smelter, foundry)
-- [ ] Resource consumption
-- [ ] Splitter logic (divide resources)
+- [x] Connection system (Shift+Click)
+- [x] Resource transfers through connections
+- [x] Processing buildings (smelter, foundry)
+- [x] Recipe system with progress tracking
+- [x] Visual flow animations (particles moving along connections)
+- [x] Connection deletion (right-click)
+- [x] Processing visual feedback (pulse + progress bar)
+- [x] Invisible grid system
 
 ### Implemented Features
 
@@ -357,7 +366,7 @@ All features are **functional but basic** - they work for core gameplay but need
 
 **Resource Limits:**
 - Water: Stops at 200 (forces usage in production)
-- Miners: Stop at 100 (forces manual collection)
+- Miners: Stop at 100 (forces manual collection or connection to storage)
 - All mining produces stone byproduct (limits pure stone nodes)
 
 **Inventory System:**
@@ -367,37 +376,83 @@ All features are **functional but basic** - they work for core gameplay but need
 - Popup modal showing all resources with colored tiles
 - Capacity bar (green/yellow/red based on usage)
 
+**Processing Recipes:**
+- Smelter: 2 iron ore + 1 coal → 1 iron bar + slag (10 seconds)
+- Foundry: 2 iron bars → 1 advanced metal (20 seconds)
+- Recipe progress shown as yellow bar at bottom of building
+- Visual pulse animation when actively processing
+
+**Connection System:**
+- Create: Shift+Click first building, then Shift+Click second building
+- Delete: Right-click on connection line
+- Visual: Green dashed lines with animated yellow particles flowing
+- Transfer rate: 1 item per second per connection
+- Auto-routing: Resources flow to buildings that need them
+
 ### Key Files
 
 ```
 src/
 ├── components/game/
-│   ├── Inventory.tsx    # Full inventory UI with resource grid
-│   ├── ResourceBar.tsx  # Quick stats (population, resources)
-│   ├── Tile.tsx         # Visual storage indicators
-│   └── Grid.tsx         # Collection click handler
-├── store/gameStore.ts   # Tick system, storage logic
-└── types/game.ts        # Storage fields in PlacedCard
+│   ├── Inventory.tsx         # Full inventory UI with resource grid
+│   ├── ResourceBar.tsx       # Quick stats (population, resources)
+│   ├── ConnectionFlow.tsx    # NEW: Animated flow particles
+│   ├── Tile.tsx              # Visual storage/processing indicators
+│   └── Grid.tsx              # Connection rendering & deletion
+├── store/gameStore.ts        # Tick system, recipes, connections
+├── data/recipes.ts           # Recipe definitions
+└── types/game.ts             # Storage, Connection, Recipe types
 ```
 
 ### Deliverable
-✅ Functional resource production with storage limits and manual collection
-⏳ Automated resource flow between buildings via conveyors
-
-### Definition of Done (Phase 3)
-- [x] Resources produce over time
-- [x] Storage limits enforced
-- [x] Manual collection working
-- [x] Inventory UI functional
-- [ ] Conveyors connect buildings
-- [ ] Resources flow automatically through conveyors
-- [ ] Processing buildings consume/produce resources
-- [ ] Visual feedback for resource flow
+✅ Complete resource flow system with production, storage, connections, and processing
 
 ---
 
-## Phase 4: Production Chains & Population (Next Up)
-**Estimated Time: 1-2 weeks**
+## Phase 4: Production Chains & Population ✅ COMPLETE
+**Time: 1-2 weeks** | **Actual: 30 minutes**
+
+### Goals
+- Expand production chains ✅
+- Population consumption mechanics ✅
+- Win conditions ✅
+
+### Completed Features
+
+**Production Chains:**
+- ✅ Constructor recipe: 1 iron_bar + 2 stone → 1 component (4 seconds)
+- ✅ Simplified smelter: 2 iron_ore + 1 coal → 1 iron_bar + 0.5 slag (3 seconds)
+- ✅ Foundry: 2 iron_bar + 1 coal → 1 advanced_metal (5 seconds)
+- ✅ New resource types: component, advanced_metal, slag
+
+**Population System:**
+- ✅ Population consumes 0.5 food/tick and 0.3 water/tick per person
+- ✅ Starvation: Lose 1 population per tick if food or water runs out
+- ✅ Starting population: 1, Max: 2 (expandable with housing)
+
+**Win Conditions:**
+- ✅ Victory: Reach 10 population + produce 50 components
+- ✅ Win modal with restart option
+- ✅ Continue playing option after winning
+
+### Key Files Modified
+```
+src/
+├── components/game/
+│   └── WinModal.tsx          # NEW: Victory screen
+├── store/gameStore.ts        # Population consumption, win check
+├── data/recipes.ts           # Constructor recipe added
+├── types/game.ts             # New resource types
+└── App.tsx                   # Win modal integration
+```
+
+### Deliverable
+✅ Complete survival mechanics with resource consumption and victory conditions
+
+---
+
+## Phase 5: Polish & Expansion (Current Phase)
+**Estimated Time: 1 week**
 
 ### 🚀 Next Development Focus
 

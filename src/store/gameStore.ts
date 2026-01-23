@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { Tile, PlacedCard, ResourceType, GameMode, Position, Connection } from '../types/game';
-import { getRecipeForBuilding } from '../data/recipes';
+import { getRecipeForBuilding, RECIPES } from '../data/recipes';
 
 interface GameState {
   // Grid
@@ -28,6 +28,7 @@ interface GameState {
   turn: number;
   isPaused: boolean;
   isGameOver: boolean;
+  hasWon: boolean;
   
   // Actions
   initGame: (mode: GameMode, width?: number, height?: number) => void;
@@ -38,6 +39,7 @@ interface GameState {
   transferToStorage: (fromCardId: string, toCardId: string) => void;
   addConnection: (fromCardId: string, toCardId: string) => void;
   removeConnection: (connectionId: string) => void;
+  setRecipe: (cardInstanceId: string, recipeId: string) => void;
   tick: () => void;
 }
 
@@ -133,7 +135,10 @@ const initialResources: Record<ResourceType, number> = {
   stone: 10,
   coal: 0,
   iron_ore: 0,
-  iron_bars: 0,
+  iron_bar: 0,
+  advanced_metal: 0,
+  component: 0,
+  slag: 0,
   power: 0,
 };
 
@@ -152,6 +157,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   turn: 0,
   isPaused: false,
   isGameOver: false,
+  hasWon: false,
 
   initGame: (mode, width = 25, height = 25) => {
     const resourceNodes = createResourceNodes(width, height);
@@ -235,28 +241,28 @@ export const useGameStore = create<GameState>((set, get) => ({
     // Initialize storage for miners, extractors, and storage buildings
     if (cardId === 'miner' || cardId === 'extractor') {
       newCard.storage = {
-        water: 0, food: 0, wood: 0, stone: 0, coal: 0, iron_ore: 0, iron_bars: 0, power: 0
+        water: 0, food: 0, wood: 0, stone: 0, coal: 0, iron_ore: 0, iron_bar: 0, advanced_metal: 0, component: 0, slag: 0, power: 0
       };
       newCard.storageCapacity = 100; // Miners/extractors: 1 slot × 100 = 100 units
     } else if (cardId === 'storage_small') {
       newCard.storage = {
-        water: 0, food: 0, wood: 0, stone: 0, coal: 0, iron_ore: 0, iron_bars: 0, power: 0
+        water: 0, food: 0, wood: 0, stone: 0, coal: 0, iron_ore: 0, iron_bar: 0, advanced_metal: 0, component: 0, slag: 0, power: 0
       };
       newCard.storageCapacity = 500; // 5 slots × 100
     } else if (cardId === 'storage_medium') {
       newCard.storage = {
-        water: 0, food: 0, wood: 0, stone: 0, coal: 0, iron_ore: 0, iron_bars: 0, power: 0
+        water: 0, food: 0, wood: 0, stone: 0, coal: 0, iron_ore: 0, iron_bar: 0, advanced_metal: 0, component: 0, slag: 0, power: 0
       };
       newCard.storageCapacity = 1000; // 10 slots × 100
     } else if (cardId === 'storage_large') {
       newCard.storage = {
-        water: 0, food: 0, wood: 0, stone: 0, coal: 0, iron_ore: 0, iron_bars: 0, power: 0
+        water: 0, food: 0, wood: 0, stone: 0, coal: 0, iron_ore: 0, iron_bar: 0, advanced_metal: 0, component: 0, slag: 0, power: 0
       };
       newCard.storageCapacity = 2000; // 20 slots × 100
     } else if (['smelter', 'foundry', 'constructor'].includes(cardId)) {
       // Processing buildings have input/output storage
       newCard.storage = {
-        water: 0, food: 0, wood: 0, stone: 0, coal: 0, iron_ore: 0, iron_bars: 0, power: 0
+        water: 0, food: 0, wood: 0, stone: 0, coal: 0, iron_ore: 0, iron_bar: 0, advanced_metal: 0, component: 0, slag: 0, power: 0
       };
       newCard.storageCapacity = 200; // Can hold inputs + outputs
       newCard.isProcessing = false;
@@ -265,6 +271,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       const recipe = getRecipeForBuilding(cardId);
       if (recipe) {
         newCard.recipe = {
+          recipeId: recipe.id,
           inputs: recipe.inputs,
           outputs: recipe.outputs,
           processingTime: recipe.processingTime,
@@ -406,7 +413,8 @@ export const useGameStore = create<GameState>((set, get) => ({
           const hasInputs = Object.keys(card.recipe.inputs).every(resourceKey => {
             const resource = resourceKey as ResourceType;
             const required = card.recipe!.inputs[resource];
-            return card.storage![resource] >= required;
+            const available = card.storage![resource] || 0;
+            return required !== undefined && available >= required;
           });
           
           if (hasInputs) {
@@ -414,12 +422,14 @@ export const useGameStore = create<GameState>((set, get) => ({
             Object.keys(card.recipe.inputs).forEach(resourceKey => {
               const resource = resourceKey as ResourceType;
               const required = card.recipe!.inputs[resource];
-              updatedCards[cardIndex].storage![resource] -= required;
+              if (required !== undefined) {
+                updatedCards[cardIndex].storage![resource] -= required;
+              }
             });
             
             updatedCards[cardIndex].isProcessing = true;
             updatedCards[cardIndex].recipe!.progress = 0;
-            console.log(`${card.definitionId} started processing`);
+            console.log(`${card.definitionId} started processing ${card.recipe.recipeId}`);
           }
         }
         
@@ -434,14 +444,15 @@ export const useGameStore = create<GameState>((set, get) => ({
             Object.keys(card.recipe.outputs).forEach(resourceKey => {
               const resource = resourceKey as ResourceType;
               const output = card.recipe!.outputs[resource];
-              if (output > 0) {
+              if (output !== undefined && output > 0) {
                 updatedCards[cardIndex].storage![resource] += output;
+                console.log(`${card.definitionId} produced ${output} ${resource}`);
               }
             });
             
             updatedCards[cardIndex].isProcessing = false;
             updatedCards[cardIndex].recipe!.progress = 0;
-            console.log(`${card.definitionId} finished processing`);
+            console.log(`${card.definitionId} finished processing, storage:`, updatedCards[cardIndex].storage);
           }
         }
         
@@ -468,10 +479,10 @@ export const useGameStore = create<GameState>((set, get) => ({
                 const storageAvailable = updatedCards[storageIndex].storageCapacity! - storageUsed;
                 
                 if (storageAvailable > 10) {
-                  // Transfer outputs (iron_bars, etc)
+                  // Transfer outputs (iron_bar, etc)
                   Object.keys(card.storage).forEach(resourceKey => {
                     const resource = resourceKey as ResourceType;
-                    if (['iron_bars'].includes(resource)) { // Only transfer outputs
+                    if (['iron_bar'].includes(resource)) { // Only transfer outputs
                       const amount = updatedCards[cardIndex].storage![resource];
                       if (amount > 0) {
                         const transferAmount = Math.min(amount, storageAvailable);
@@ -533,9 +544,29 @@ export const useGameStore = create<GameState>((set, get) => ({
       }
     });
     
+    // Population consumes resources
+    const foodConsumed = state.population * 0.5; // 0.5 food per tick per person
+    const waterConsumed = state.population * 0.3; // 0.3 water per tick per person
+    
+    let newResources = { ...state.resources };
+    newResources.food = Math.max(0, newResources.food - foodConsumed);
+    newResources.water = Math.max(0, newResources.water - waterConsumed);
+    
+    // Check starvation/dehydration
+    let newPopulation = state.population;
+    if (newResources.food === 0 || newResources.water === 0) {
+      newPopulation = Math.max(1, state.population - 1); // Lose 1 pop per tick if starving
+    }
+    
+    // Check win condition: 10 population + 50 components
+    const hasWon = newPopulation >= 10 && newResources.component >= 50;
+    
     set({
       turn: state.turn + 1,
       placedCards: updatedCards,
+      resources: newResources,
+      population: newPopulation,
+      hasWon,
     });
   },
 
@@ -659,6 +690,30 @@ export const useGameStore = create<GameState>((set, get) => ({
   removeConnection: (connectionId) => {
     set((state) => ({
       connections: state.connections.filter(c => c.id !== connectionId),
+    }));
+  },  
+  setRecipe: (cardInstanceId, recipeId) => {
+    const recipe = RECIPES[recipeId];
+    
+    if (!recipe) return;
+    
+    set((state) => ({
+      placedCards: state.placedCards.map(card => {
+        if (card.instanceId === cardInstanceId) {
+          return {
+            ...card,
+            recipe: {
+              recipeId: recipe.id,
+              inputs: recipe.inputs,
+              outputs: recipe.outputs,
+              processingTime: recipe.processingTime,
+              progress: 0,
+            },
+            isProcessing: false,
+          };
+        }
+        return card;
+      }),
     }));
   },
 }));

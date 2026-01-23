@@ -1,10 +1,25 @@
-import { PlacedCard } from '../../types/game';
+import { PlacedCard, ResourceType } from '../../types/game';
+import { getRecipesForBuilding, Recipe } from '../../data/recipes';
+import { useGameStore } from '../../store/gameStore';
 
 interface CardModalProps {
   card: PlacedCard;
   onClose: () => void;
   onUpgrade?: () => void;
 }
+
+const resourceInfo: Record<ResourceType, { name: string; color: string; emoji: string }> = {
+  water: { name: 'Water', color: 'bg-blue-400', emoji: '💧' },
+  food: { name: 'Food', color: 'bg-green-400', emoji: '🌾' },
+  wood: { name: 'Wood', color: 'bg-amber-600', emoji: '🪵' },
+  stone: { name: 'Stone', color: 'bg-gray-400', emoji: '🪨' },
+  iron_ore: { name: 'Iron Ore', color: 'bg-orange-600', emoji: '⛏️' },
+  coal: { name: 'Coal', color: 'bg-gray-700', emoji: '🪨' },
+  iron_bar: { name: 'Iron Bar', color: 'bg-gray-500', emoji: '🔩' },
+  advanced_metal: { name: 'Advanced Metal', color: 'bg-blue-500', emoji: '⚙️' },
+  component: { name: 'Component', color: 'bg-purple-500', emoji: '🔧' },
+  slag: { name: 'Slag', color: 'bg-red-900', emoji: '💩' },
+};
 
 const cardStyles: Record<string, { 
   gradient: string; 
@@ -117,6 +132,12 @@ export function CardModal({ card, onClose, onUpgrade }: CardModalProps) {
   const style = cardStyles[card.definitionId] || cardStyles.miner;
   const emoji = cardEmojis[card.definitionId] || '📦';
   const tier = card.tier || 1;
+  const setRecipe = useGameStore((state) => state.setRecipe);
+  
+  // Get available recipes for this building
+  const availableRecipes = getRecipesForBuilding(card.definitionId);
+  const hasRecipes = availableRecipes.length > 0;
+  const currentRecipeId = card.recipe?.recipeId;
   
   const tierNames = {
     1: 'Common',
@@ -141,6 +162,17 @@ export function CardModal({ card, onClose, onUpgrade }: CardModalProps) {
     2: '150%',
     3: '200%',
   };
+
+  // Get storage contents
+  const storageContents = card.storage || {};
+  const storageUsed = Object.values(storageContents).reduce((sum, val) => sum + val, 0);
+  const capacity = card.storageCapacity || 0;
+  const hasStorage = capacity > 0;
+  const fillPercent = capacity > 0 ? Math.floor((storageUsed / capacity) * 100) : 0;
+  
+  // Check if processing
+  const isProcessing = card.isProcessing || false;
+  const recipeProgress = card.recipe?.progress || 0;
 
   return (
     <div 
@@ -225,6 +257,117 @@ export function CardModal({ card, onClose, onUpgrade }: CardModalProps) {
                 </div>
               </div>
             </div>
+
+            {/* Storage/Inventory Section */}
+            {hasStorage && (
+              <div className="bg-amber-50 rounded-lg p-3 mb-4 border-2 border-amber-300">
+                <div className="flex justify-between items-center mb-2">
+                  <div className="text-xs font-bold text-amber-700 uppercase">Storage</div>
+                  <div className="text-xs text-gray-600">
+                    {Math.floor(storageUsed)} / {capacity} ({fillPercent}%)
+                  </div>
+                </div>
+                
+                {/* Storage bar */}
+                <div className="w-full bg-gray-200 rounded-full h-2 mb-3 overflow-hidden">
+                  <div 
+                    className={`h-full transition-all ${
+                      fillPercent >= 90 ? 'bg-red-500' : 
+                      fillPercent >= 70 ? 'bg-yellow-500' : 
+                      'bg-green-500'
+                    }`}
+                    style={{ width: `${fillPercent}%` }}
+                  />
+                </div>
+
+                {/* Resource items */}
+                {Object.keys(storageContents).length > 0 ? (
+                  <div className="grid grid-cols-2 gap-2">
+                    {Object.entries(storageContents).map(([resource, amount]) => {
+                      if (amount === 0) return null;
+                      const info = resourceInfo[resource as ResourceType];
+                      return (
+                        <div 
+                          key={resource}
+                          className={`${info.color} rounded p-2 text-white text-center border border-white/30`}
+                        >
+                          <div className="text-lg">{info.emoji}</div>
+                          <div className="text-xs font-bold">{Math.floor(amount)}</div>
+                          <div className="text-[8px] opacity-80">{info.name}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="text-center text-gray-400 text-sm py-2">
+                    Empty
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Recipe Progress Section */}
+            {isProcessing && card.recipe && (
+              <div className="bg-yellow-50 rounded-lg p-3 mb-4 border-2 border-yellow-300">
+                <div className="text-xs font-bold text-yellow-700 uppercase mb-2">Processing</div>
+                <div className="text-sm text-gray-700 mb-2">
+                  {availableRecipes.find(r => r.id === card.recipe?.recipeId)?.name || 'Processing...'}
+                </div>
+                
+                {/* Progress bar */}
+                <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-yellow-400 to-yellow-600 transition-all"
+                    style={{ width: `${recipeProgress}%` }}
+                  />
+                </div>
+                <div className="text-xs text-gray-600 text-right mt-1">
+                  {Math.floor(recipeProgress)}%
+                </div>
+              </div>
+            )}
+            
+            {/* Recipe Selection Section */}
+            {hasRecipes && (
+              <div className="bg-indigo-50 rounded-lg p-3 mb-4 border-2 border-indigo-300">
+                <div className="text-xs font-bold text-indigo-700 uppercase mb-2">Select Recipe</div>
+                <div className="space-y-2">
+                  {availableRecipes.map((recipe) => {
+                    const isActive = recipe.id === currentRecipeId;
+                    return (
+                      <button
+                        key={recipe.id}
+                        onClick={() => {
+                          setRecipe(card.instanceId, recipe.id);
+                        }}
+                        className={`w-full p-2 rounded-lg border-2 text-left transition-all ${
+                          isActive 
+                            ? 'bg-indigo-500 border-indigo-600 text-white' 
+                            : 'bg-white border-indigo-200 hover:border-indigo-400 text-gray-700'
+                        }`}
+                      >
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="font-bold text-sm">{recipe.name}</span>
+                          <span className="text-xs opacity-75">{recipe.processingTime}s</span>
+                        </div>
+                        <div className="text-[10px] opacity-90">
+                          <span className="mr-2">
+                            In: {Object.entries(recipe.inputs).map(([res, amt]) => 
+                              `${resourceInfo[res as ResourceType]?.emoji || '?'}×${amt}`
+                            ).join(' ')}
+                          </span>
+                          <span>
+                            Out: {Object.entries(recipe.outputs).map(([res, amt]) => 
+                              `${resourceInfo[res as ResourceType]?.emoji || '?'}×${amt}`
+                            ).join(' ')}
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* Upgrade Slots */}
             <div className="bg-purple-50 rounded-lg p-3 border-2 border-purple-300">
