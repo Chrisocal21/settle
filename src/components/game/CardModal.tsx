@@ -1,5 +1,5 @@
 import { PlacedCard, ResourceType } from '../../types/game';
-import { getRecipesForBuilding, Recipe } from '../../data/recipes';
+import { getRecipesForBuilding } from '../../data/recipes';
 import { useGameStore } from '../../store/gameStore';
 
 interface CardModalProps {
@@ -19,6 +19,7 @@ const resourceInfo: Record<ResourceType, { name: string; color: string; emoji: s
   advanced_metal: { name: 'Advanced Metal', color: 'bg-blue-500', emoji: '⚙️' },
   component: { name: 'Component', color: 'bg-purple-500', emoji: '🔧' },
   slag: { name: 'Slag', color: 'bg-red-900', emoji: '💩' },
+  power: { name: 'Power', color: 'bg-yellow-400', emoji: '⚡' },
 };
 
 const cardStyles: Record<string, { 
