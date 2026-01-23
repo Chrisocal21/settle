@@ -32,7 +32,7 @@ interface GameState {
   hasWon: boolean;
   
   // Actions
-  initGame: (mode: GameMode, width?: number, height?: number) => void;
+  initGame: (mode: GameMode, mapId?: string) => void;
   revealTile: (position: Position) => void;
   addResource: (resource: ResourceType, amount: number) => void;
   placeCard: (cardId: string, position: Position) => void;
@@ -71,76 +71,6 @@ const createResourceNodes = (mapId: string = DEFAULT_MAP): PlacedCard[] => {
     isStationary: true,
     tier: node.tier,
   }));
-};
-
-// Keep old function for reference, but not used
-const createResourceNodesOld = (width: number, height: number): PlacedCard[] => {
-  const nodes: PlacedCard[] = [];
-  
-  const getRandomTier = () => {
-    const rand = Math.random();
-    if (rand < 0.5) return 1; // 50% common
-    if (rand < 0.85) return 2; // 35% uncommon
-    return 3; // 15% rare
-  };
-  
-  // Add water sources (4-6 scattered)
-  for (let i = 0; i < 5; i++) {
-    nodes.push({
-      instanceId: `water-source-${i}`,
-      definitionId: 'water_source',
-      position: { 
-        x: Math.floor(Math.random() * width), 
-        y: Math.floor(Math.random() * height) 
-      },
-      isStationary: true,
-      tier: getRandomTier(),
-    });
-  }
-  
-  // Add iron ore deposits
-  for (let i = 0; i < 4; i++) {
-    nodes.push({
-      instanceId: `iron-ore-${i}`,
-      definitionId: 'iron_ore_deposit',
-      position: { 
-        x: Math.floor(Math.random() * width), 
-        y: Math.floor(Math.random() * height) 
-      },
-      isStationary: true,
-      tier: getRandomTier(),
-    });
-  }
-  
-  // Add coal deposits
-  for (let i = 0; i < 4; i++) {
-    nodes.push({
-      instanceId: `coal-${i}`,
-      definitionId: 'coal_deposit',
-      position: { 
-        x: Math.floor(Math.random() * width), 
-        y: Math.floor(Math.random() * height) 
-      },
-      isStationary: true,
-      tier: getRandomTier(),
-    });
-  }
-  
-  // Add stone quarries
-  for (let i = 0; i < 3; i++) {
-    nodes.push({
-      instanceId: `stone-${i}`,
-      definitionId: 'stone_quarry',
-      position: { 
-        x: Math.floor(Math.random() * width), 
-        y: Math.floor(Math.random() * height) 
-      },
-      isStationary: true,
-      tier: getRandomTier(),
-    });
-  }
-  
-  return nodes;
 };
 
 const initialResources: Record<ResourceType, number> = {

@@ -23,7 +23,7 @@ function App() {
   const [touchStartY, setTouchStartY] = useState<number | null>(null);
 
   useEffect(() => {
-    initGame('survival', 30, 30);
+    initGame('survival', 'fantasy_world');
   }, [initGame]);
 
   // Game loop - tick every second
@@ -162,7 +162,7 @@ function App() {
           onClose={() => setShowWinModal(false)}
           onRestart={() => {
             setShowWinModal(false);
-            initGame('survival', 30, 30);
+            initGame('survival', 'fantasy_world');
           }}
         />
       )}
